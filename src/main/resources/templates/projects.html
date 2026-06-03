@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Collaborate - Projects</title>
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: #ffffff;
+}
+
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 40px;
+}
+
+.nav-links {
+	display: flex;
+	gap: 30px;
+}
+
+.nav-item {
+	color: #008ba3;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 15px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	background: none;
+	border: none;
+	font-family: inherit;
+}
+
+.nav-item:hover {
+	text-decoration: underline;
+}
+
+.logo-small {
+	position: relative;
+	width: 40px;
+	height: 40px;
+}
+
+.c-main {
+	width: 18px;
+	height: 18px;
+	border: 2px solid #0097a7;
+	border-radius: 50%;
+	position: absolute;
+	top: 5px;
+	left: 9px;
+	background: #fff;
+	z-index: 2;
+}
+
+.sml {
+	width: 10px;
+	height: 5px;
+	border-bottom: 2px solid #0097a7;
+	border-radius: 0 0 10px 10px;
+	margin: 7px auto 0 auto;
+}
+
+.c-left, .c-right {
+	width: 14px;
+	height: 14px;
+	border: 2px solid #0097a7;
+	border-radius: 50%;
+	position: absolute;
+	top: 9px;
+	background: #fff;
+	z-index: 1;
+}
+
+.c-left {
+	left: 2px;
+}
+
+.c-right {
+	right: 2px;
+}
+
+.main-container {
+	text-align: center;
+	margin-top: 40px;
+	padding: 0 20px;
+}
+
+h1 {
+	font-size: 36px;
+	font-weight: 700;
+	color: #2c3e50;
+	margin-bottom: 40px;
+}
+
+.project-tabs {
+	display: flex;
+	justify-content: center;
+	gap: 50px;
+	flex-wrap: wrap;
+}
+
+.tab-box {
+	border: 2px dashed #e0e0e0;
+	background-color: #fafafa;
+	padding: 15px 40px;
+	font-size: 16px;
+	color: #555;
+	border-radius: 4px;
+	min-width: 180px;
+	cursor: pointer;
+	transition: all 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.tab-box:hover {
+	background-color: #f0f0f0;
+	border-color: #b0b0b0;
+	color: #2c3e50;
+}
+
+.logout-form {
+	display: none;
+}
+</style>
+</head>
+<body>
+
+	<div class="navbar">
+		<div class="logo-small">
+			<div class="c-left"></div>
+			<div class="c-main">
+				<div class="sml"></div>
+			</div>
+			<div class="c-right"></div>
+		</div>
+
+		<div class="nav-links">
+			<a href="/projects/new" class="nav-item">＋ Add Project</a> <a
+				href="/profile/edit" class="nav-item">⚙ Edit Profile</a>
+
+			<form th:action="@{/logout}" method="post" id="logoutForm"
+				class="logout-form"></form>
+			<button type="submit" form="logoutForm" class="nav-item">🔓
+				Log Out</button>
+		</div>
+	</div>
+
+	<div class="main-container">
+		<h1>Projects</h1>
+
+		<div class="project-tabs">
+			<div class="tab-box">
+				<span>✳</span> All projects
+			</div>
+			<div class="tab-box">
+				<span>📝</span> Created by me
+			</div>
+			<div class="tab-box">
+				<span>👥</span> Shared with me
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
