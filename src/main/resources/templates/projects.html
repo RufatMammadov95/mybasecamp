@@ -45,6 +45,7 @@ body {
 	position: relative;
 	width: 40px;
 	height: 40px;
+	cursor: pointer;
 }
 
 .c-main {
@@ -89,7 +90,7 @@ body {
 .main-container {
 	text-align: center;
 	margin-top: 40px;
-	padding: 0 20px;
+	padding: 0 40px;
 }
 
 h1 {
@@ -103,55 +104,210 @@ h1 {
 	display: flex;
 	justify-content: center;
 	gap: 50px;
-	flex-wrap: wrap;
+	margin-bottom: 40px;
 }
 
 .tab-box {
 	border: 2px dashed #e0e0e0;
 	background-color: #fafafa;
-	padding: 15px 40px;
+	padding: 12px 35px;
 	font-size: 16px;
 	color: #555;
 	border-radius: 4px;
-	min-width: 180px;
-	cursor: pointer;
-	transition: all 0.2s;
 	display: flex;
 	align-items: center;
-	justify-content: center;
 	gap: 8px;
 }
 
-.tab-box:hover {
-	background-color: #f0f0f0;
-	border-color: #b0b0b0;
-	color: #2c3e50;
+.form-container {
+	display: none;
+	max-width: 600px;
+	margin: 0 auto 40px auto;
+	text-align: left;
+	padding: 20px;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	background-color: #fafafa;
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+
+label {
+	display: block;
+	font-size: 14px;
+	color: #555;
+	margin-bottom: 5px;
+	font-weight: 500;
+}
+
+input[type="text"], textarea {
+	width: 100%;
+	padding: 10px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	outline: none;
+	font-family: inherit;
+}
+
+textarea {
+	height: 80px;
+	resize: vertical;
+}
+
+.btn-submit {
+	background-color: #586069;
+	color: white;
+	padding: 8px 20px;
+	font-size: 15px;
+	font-weight: bold;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.btn-submit:hover {
+	background-color: #444d56;
+}
+
+.projects-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px;
+	justify-content: flex-start;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding-top: 20px;
+}
+
+.project-card {
+	width: 320px;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.card-header {
+	background-color: #2d3748;
+	color: white;
+	padding: 20px;
+	position: relative;
+	text-align: left;
+}
+
+.card-header h3 {
+	margin: 0 0 8px 0;
+	font-size: 20px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.card-header h3:hover {
+	text-decoration: underline;
+}
+
+.card-header .owner {
+	font-size: 13px;
+	color: #cbd5e0;
+}
+
+.btn-edit {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	color: #cbd5e0;
+	text-decoration: none;
+	font-size: 18px;
+}
+
+.btn-edit:hover {
+	color: white;
+}
+
+.card-body {
+	padding: 20px;
+	min-height: 80px;
+	color: #4a5568;
+	font-size: 15px;
+	background-color: #fff;
+	text-align: left;
+}
+
+.card-footer {
+	background-color: #f7fafc;
+	padding: 15px 20px;
+	border-top: 1px solid #edf2f7;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.card-stats {
+	display: flex;
+	gap: 15px;
+	color: #718096;
+	font-size: 14px;
+}
+
+.stat-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	background: #e2e8f0;
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.btn-delete {
+	background-color: #f56565;
+	color: white;
+	border: none;
+	padding: 8px 12px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.btn-delete:hover {
+	background-color: #e53e3e;
 }
 
 .logout-form {
 	display: none;
 }
 </style>
+
+<script>
+	function toggleProjectForm() {
+		var form = document.getElementById("newProjectFormContainer");
+		if (form.style.display === "none" || form.style.display === "") {
+			form.style.display = "block";
+		} else {
+			form.style.display = "none";
+		}
+	}
+</script>
 </head>
 <body>
 
 	<div class="navbar">
-		<div class="logo-small">
+		<div class="logo-small" onclick="window.location.href='/projects'">
 			<div class="c-left"></div>
 			<div class="c-main">
 				<div class="sml"></div>
 			</div>
 			<div class="c-right"></div>
 		</div>
-
 		<div class="nav-links">
-			<a href="/projects/new" class="nav-item">＋ Add Project</a> <a
-				href="/profile/edit" class="nav-item">⚙ Edit Profile</a>
-
-			<form th:action="@{/logout}" method="post" id="logoutForm"
-				class="logout-form"></form>
-			<button type="submit" form="logoutForm" class="nav-item">🔓
-				Log Out</button>
+			<button type="button" class="nav-item" onclick="toggleProjectForm()">+ Add Project</button>
+			<a href="/profile/edit" class="nav-item">⚙ Edit Profile</a>
+			<form th:action="@{/logout}" method="post" id="logoutForm" class="logout-form"></form>
+			<button type="submit" form="logoutForm" class="nav-item">🔓 Log Out</button>
 		</div>
 	</div>
 
@@ -167,6 +323,56 @@ h1 {
 			</div>
 			<div class="tab-box">
 				<span>👥</span> Shared with me
+			</div>
+		</div>
+
+		<div id="newProjectFormContainer" class="form-container">
+			<h3 style="margin-top: 0; color: #2c3e50;">Create New Project</h3>
+			<form th:action="@{/projects/new}" th:object="${newProjectObj}" method="post">
+				<div class="form-group">
+					<label for="name">Name</label> 
+					<input type="text" id="name" th:field="*{name}" required />
+				</div>
+				<div class="form-group">
+					<label for="description">Description</label>
+					<textarea id="description" th:field="*{description}"></textarea>
+				</div>
+				<button type="submit" class="btn-submit">Create Project</button>
+			</form>
+		</div>
+
+		<div class="projects-grid">
+			<div th:if="${#lists.isEmpty(projects)}"
+				style="color: #a0aec0; width: 100%; text-align: center;">No
+				projects have been created yet. Add one by clicking "+ Add Project"
+				from the top menu.</div>
+
+			<div th:each="project : ${projects}" class="project-card">
+				<div class="card-header">
+					<h3 th:onclick="'window.location.href=\'/projects/view/' + ${project.id} + '\''" 
+					    th:text="${project.name}">New Project!!</h3>
+					
+					<div class="owner">
+						<span>🖋</span> <span th:text="${project.owner.email}">toto@gmail.com</span>
+					</div>
+
+					<a th:href="@{/projects/view/{id}(id=${project.id})}" class="btn-edit">⚙️</a>
+				</div>
+
+				<div class="card-body" th:text="${project.description}">
+					Description.
+				</div>
+
+				<div class="card-footer">
+					<div class="card-stats">
+						<div class="stat-item">👥 1</div>
+						<div class="stat-item">💬 0</div>
+					</div>
+					<form th:action="@{/projects/delete/{id}(id=${project.id})}"
+						method="post" onsubmit="return confirm('Do you want to delete?');">
+						<button type="submit" class="btn-delete">🗑️</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>

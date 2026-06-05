@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${project.name}">Project Details</title>
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Segoe UI', sans-serif;
+	background-color: #fff;
+}
+
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 40px;
+}
+
+.nav-links {
+	display: flex;
+	gap: 30px;
+}
+
+.nav-item {
+	color: #008ba3;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 15px;
+	cursor: pointer;
+	background: none;
+	border: none;
+}
+
+.container {
+	display: flex;
+	max-width: 1300px;
+	margin: 40px auto;
+	padding: 0 20px;
+	gap: 50px;
+}
+
+.left-content {
+	flex: 3;
+	text-align: left;
+}
+
+.right-sidebar {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: flex-start;
+}
+
+h1 {
+	font-size: 36px;
+	margin: 0 0 5px 0;
+	color: #2c3e50;
+}
+
+.created-by {
+	font-size: 14px;
+	color: #7f8c8d;
+	margin-bottom: 30px;
+}
+
+.btn-blue {
+	background-color: #008ba3;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 4px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.btn-orange {
+	background-color: #f39c12;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 4px;
+	font-weight: bold;
+	cursor: pointer;
+	width: 150px;
+	text-align: left;
+}
+
+.btn-gray {
+	background-color: #586069;
+	color: white;
+	border: none;
+	padding: 8px 15px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.btn-yellow {
+	background-color: #f1c40f;
+	color: #2c3e50;
+	border: none;
+	padding: 8px 15px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.section-block {
+	border: 1px solid #e0e0e0;
+	padding: 20px;
+	border-radius: 6px;
+	background: #fafafa;
+	margin-bottom: 20px;
+}
+
+.form-inline {
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.form-control {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.discussion-box {
+	border: 2px solid #008ba3;
+	border-radius: 6px;
+	margin-top: 20px;
+	background: #fdfdfd;
+}
+
+.discussion-header {
+	background: #f4f6f7;
+	padding: 10px;
+	font-weight: bold;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.discussion-body {
+	padding: 20px;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.msg {
+	margin-bottom: 15px;
+	border-bottom: 1px dashed #eee;
+	padding-bottom: 10px;
+}
+
+.msg-user {
+	font-weight: bold;
+	color: #008ba3;
+	font-size: 14px;
+}
+
+.msg-text {
+	margin: 5px 0;
+	color: #333;
+}
+
+.image-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	margin-top: 15px;
+}
+
+.image-card {
+	border: 1px solid #e0e0e0;
+	padding: 8px;
+	border-radius: 6px;
+	background: #fafafa;
+	text-align: center;
+	max-width: 180px;
+}
+
+.image-preview {
+	max-width: 100%;
+	max-height: 120px;
+	border-radius: 4px;
+	object-fit: cover;
+	display: block;
+	margin: 0 auto 8px auto;
+}
+
+.switch input:checked+.slider {
+	background-color: #008ba3;
+}
+
+.switch .slider:before {
+	position: absolute;
+	content: "";
+	height: 16px;
+	width: 16px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: .3s;
+	border-radius: 50%;
+}
+
+.switch input:checked+.slider:before {
+	transform: translateX(22px);
+}
+
+.file-icon {
+	font-size: 35px;
+	margin-bottom: 8px;
+}
+
+.panel {
+	display: none;
+}
+
+.panel.active {
+	display: block;
+}
+</style>
+<script>
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+
+	<div class="navbar">
+		<div style="font-weight: bold; color: #008ba3; cursor: pointer;"
+			onclick="window.location.href='/projects'">Collaborate</div>
+		<div class="nav-links">
+			<a href="/projects" class="nav-item">🏠 Projects</a>
+			<form th:action="@{/logout}" method="post" id="lg"
+				style="display: none;"></form>
+			<button type="submit" form="lg" class="nav-item">🔓 Log Out</button>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="left-content">
+			<h1 th:text="${project.name}">New Project!!</h1>
+			<div class="created-by">
+				🖋 Created by: <span th:text="${project.owner.email}">toto@gmail.com</span>
+			</div>
+
+			<div id="panel-overview" class="panel"
+				th:classappend="${activePanel == null || activePanel == 'overview'} ? 'active' : ''">
+				<p style="font-size: 16px; color: #34495e;"
+					th:text="${project.description}">Description.</p>
+
+				<h3
+					style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px;">Project
+					Images (Overview)</h3>
+				<div class="image-gallery">
+					<div th:each="file : ${attachments}" th:if="${file.isImage}"
+						class="image-card">
+						<img th:src="'data:image/jpeg;base64,' + ${file.base64Data}"
+							class="image-preview" alt="Overview Image" />
+					</div>
+					<div th:if="${#lists.isEmpty(attachments)}"
+						style="color: #999; font-size: 14px;">No images have been
+						uploaded yet.</div>
+				</div>
+			</div>
+
+			<div id="panel-edit" class="panel"
+				th:classappend="${activePanel == 'edit'} ? 'active' : ''">
+				<h3>Edit Project</h3>
+				<div class="section-block">
+					<form th:action="@{/projects/edit-name/{id}(id=${project.id})}"
+						method="post" class="form-inline">
+						<input type="text" name="name" th:value="${project.name}"
+							class="form-control" required />
+						<button type="submit" class="btn-gray">Update Name</button>
+					</form>
+				</div>
+				<div class="section-block">
+					<form th:action="@{/projects/edit-desc/{id}(id=${project.id})}"
+						method="post">
+						<textarea name="description" class="form-control"
+							style="height: 100px;" th:text="${project.description}"></textarea>
+						<button type="submit" class="btn-gray" style="margin-top: 10px;">Update
+							Description</button>
+					</form>
+				</div>
+			</div>
+
+			<div id="panel-members" class="panel"
+				th:classappend="${activePanel == 'members'} ? 'active' : ''">
+				<h3>Members</h3>
+				<div class="section-block">
+
+					<div th:if="${error}"
+						style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
+						❌ <span th:text="${error}">Error message</span>
+					</div>
+
+					<div th:if="${success}"
+						style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
+						✅ <span th:text="${success}">Good luck message</span>
+					</div>
+
+					<ul style="margin-bottom: 15px; padding-left: 20px;">
+						<li th:text="${project.owner.email} + ' (Owner)'">owner@gmail.com
+							(Owner)</li>
+						<li th:each="member : ${project.getMembers()}"
+							th:text="${member.email}">member@gmail.com</li>
+					</ul>
+
+					<form th:action="@{/projects/add-member/{id}(id=${project.id})}"
+						method="post">
+						<div class="form-inline">
+							<input type="email" name="email" placeholder="Add Member (email)"
+								class="form-control" required />
+							<button type="submit" class="btn-yellow">+</button>
+						</div>
+
+						<div
+							style="display: flex; align-items: center; gap: 10px; margin-top: 15px; user-select: none;">
+							<label class="switch"
+								style="position: relative; display: inline-block; width: 44px; height: 22px;">
+								<input type="checkbox" name="isAdmin" value="true"
+								style="opacity: 0; width: 0; height: 0;" id="adminToggle">
+								<span class="slider"
+								style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px;"></span>
+							</label> <span style="font-size: 14px; color: #333; font-weight: 500;">Make
+								this member an Admin</span>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div id="panel-topics" class="panel"
+				th:classappend="${activePanel == 'topics'} ? 'active' : ''">
+				<h3>Discussions</h3>
+				<form th:action="@{/projects/add-discussion/{id}(id=${project.id})}"
+					method="post" class="form-inline">
+					<input type="text" name="content" placeholder="Add new discussion"
+						class="form-control" required />
+					<button type="submit" class="btn-yellow">new discussion</button>
+				</form>
+
+				<div class="discussion-box">
+					<div class="discussion-header">Discussion</div>
+					<div class="discussion-body">
+						<div th:each="msg : ${discussions}" class="msg">
+							<span class="msg-user" th:text="${msg.user.email}">user@mail.com</span>
+							<p class="msg-text" th:text="${msg.content}">Message body</p>
+						</div>
+					</div>
+					<div style="padding: 15px; border-top: 1px solid #e0e0e0;">
+						<form
+							th:action="@{/projects/add-discussion/{id}(id=${project.id})}"
+							method="post" class="form-inline">
+							<input type="text" name="content"
+								placeholder="Write a message..." class="form-control" required />
+							<button type="submit" class="btn-yellow"
+								style="background: #f39c12; color: white;">Send</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div id="panel-attachments" class="panel"
+				th:classappend="${activePanel == 'attachments'} ? 'active' : ''">
+				<h3>Attachments</h3>
+				<div class="section-block">
+					<form th:action="@{/projects/upload/{id}(id=${project.id})}"
+						method="post" enctype="multipart/form-data" class="form-inline">
+						<input type="file" name="file" class="form-control" required />
+						<button type="submit" class="btn-yellow">📂 Upload</button>
+					</form>
+				</div>
+
+				<div class="image-gallery">
+					<div th:each="file : ${attachments}" class="image-card">
+						<div th:if="${file.isImage}">
+							<img th:src="'data:image/jpeg;base64,' + ${file.base64Data}"
+								class="image-preview" alt="Attachment Image" />
+						</div>
+						<div th:unless="${file.isImage}">
+							<div class="file-icon">📄</div>
+							<span th:text="${file.fileName}"
+								style="font-size: 12px; color: #555; word-break: break-all; font-weight: 500;">file.txt</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="right-sidebar">
+			<button class="btn-blue" onclick="showPanel('panel-edit')">⚙️
+				Edit Project</button>
+			<button class="btn-orange" onclick="showPanel('panel-members')">💛
+				Members</button>
+			<button class="btn-orange" onclick="showPanel('panel-topics')">💬
+				Topics</button>
+			<button class="btn-orange" onclick="showPanel('panel-attachments')">📄
+				Attachments</button>
+			<button class="btn-orange" style="background: #586069;"
+				onclick="showPanel('panel-overview')">👁 Overview</button>
+
+			<form th:action="@{/projects/delete/{id}(id=${project.id})}"
+				method="post"
+				onsubmit="return confirm('Are you sure you want to delete this project?');"
+				style="width: 100%;">
+				<button type="submit" class="btn-orange"
+					style="background: #e74c3c; width: 150px;">🗑 Delete
+					Project</button>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>

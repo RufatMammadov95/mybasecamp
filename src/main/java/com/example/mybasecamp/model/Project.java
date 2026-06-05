@@ -1,6 +1,8 @@
 package com.example.mybasecamp.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "projects")
@@ -18,6 +20,10 @@ public class Project {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User owner;
+
+	@ManyToMany
+	@JoinTable(name = "project_members", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<User> members = new ArrayList<>();
 
 	public Project() {
 	}
@@ -58,5 +64,13 @@ public class Project {
 
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+
+	public List<User> getMembers() {
+		return members;
+	}
+
+	public void setMembers(List<User> members) {
+		this.members = (members != null) ? members : new ArrayList<>();
 	}
 }
