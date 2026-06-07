@@ -12,8 +12,9 @@ public class Attachment {
 
 	private String fileName;
 
-	@Lob
-	@Column(columnDefinition = "LONGBLOB")
+	private String contentType;
+
+	@Column(name = "data", columnDefinition = "bytea")
 	private byte[] data;
 
 	@ManyToOne
@@ -34,6 +35,14 @@ public class Attachment {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 
 	public byte[] getData() {

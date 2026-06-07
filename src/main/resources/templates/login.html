@@ -23,19 +23,21 @@
 
 		<div th:if="${param.error}" class="error-msg">Email or password
 			is incorrect!</div>
+
 		<div th:if="${param.success}" class="success-msg">Registration
 			completed! You can now log in</div>
+
 		<div th:if="${param.logout}" class="success-msg">You have
 			successfully logged out of the system</div>
 
 		<form th:action="@{/login}" method="post">
 			<div class="form-group">
-				<label th:for="username">Email</label> <input type="email"
+				<label for="username">Email</label> <input type="email"
 					id="username" name="username" required />
 			</div>
 
 			<div class="form-group">
-				<label th:for="password">Password</label> <input type="password"
+				<label for="password">Password</label> <input type="password"
 					id="password" name="password" required />
 			</div>
 

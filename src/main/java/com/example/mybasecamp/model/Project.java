@@ -25,6 +25,12 @@ public class Project {
 	@JoinTable(name = "project_members", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private List<User> members = new ArrayList<>();
 
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Attachment> attachments = new ArrayList<>();
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Discussion> discussions = new ArrayList<>();
+
 	public Project() {
 	}
 
@@ -58,6 +64,18 @@ public class Project {
 		this.description = description;
 	}
 
+	public int getDiscussionCount() {
+		return this.discussions != null ? this.discussions.size() : 0;
+	}
+
+	public int getTotalMemberCount() {
+		int count = 1;
+		if (this.members != null) {
+			count += this.members.size();
+		}
+		return count;
+	}
+
 	public User getOwner() {
 		return owner;
 	}
@@ -72,5 +90,21 @@ public class Project {
 
 	public void setMembers(List<User> members) {
 		this.members = (members != null) ? members : new ArrayList<>();
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = (attachments != null) ? attachments : new ArrayList<>();
+	}
+
+	public List<Discussion> getDiscussions() {
+		return discussions;
+	}
+
+	public void setDiscussions(List<Discussion> discussions) {
+		this.discussions = (discussions != null) ? discussions : new ArrayList<>();
 	}
 }

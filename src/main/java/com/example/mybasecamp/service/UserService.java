@@ -20,13 +20,50 @@ public class UserService {
 	}
 
 	public User registerUser(User user) {
-
 		Objects.requireNonNull(user, "The User object cannot be empty!");
+
+		if (userRepository.existsByEmail(user.getEmail())) {
+			throw new RuntimeException("This email address is already registered!");
+		}
+
+		if (userRepository.existsByUsername(user.getUsername())) {
+			throw new RuntimeException("This username (Name) is already taken! Try another name.");
+		}
 
 		String hashedPassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(hashedPassword);
 		user.setRole(User.Role.USER);
 		return userRepository.save(user);
+	}
+
+	public void updateProfile(String email, String newUsername, String oldPassword, String newPassword) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new UserNotFoundException("İstifadəçi tapılmadı"));
+
+		if (newUsername != null && !newUsername.trim().isEmpty()) {
+			if (!user.getUsername().equals(newUsername) && userRepository.existsByUsername(newUsername)) {
+				throw new RuntimeException("Bu istifadəçi adı artıq götürülüb!");
+			}
+			user.setUsername(newUsername);
+		}
+
+		if (newPassword != null && !newPassword.trim().isEmpty()) {
+			if (oldPassword == null || oldPassword.trim().isEmpty()) {
+				throw new RuntimeException("Şifrəni dəyişmək üçün köhnə şifrəni daxil etməlisiniz!");
+			}
+
+			if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+				throw new RuntimeException("Daxil etdiyiniz köhnə şifrə yanlışdır!");
+			}
+
+			if (newPassword.length() < 6) {
+				throw new RuntimeException("Yeni şifrə ən azı 6 simvoldan ibarət olmalıdır!");
+			}
+
+			user.setPassword(passwordEncoder.encode(newPassword));
+		}
+
+		userRepository.save(user);
 	}
 
 	public User getUserById(Long id) {
@@ -44,7 +81,6 @@ public class UserService {
 	}
 
 	public void deleteUser(Long id) {
-
 		User user = getUserById(id);
 		userRepository.delete(user);
 	}

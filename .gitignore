@@ -1,10 +1,16 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+.env
+*.env
+
+.docker/
+postgres_data/
+postgres-data/
+
 .apt_generated
 .classpath
 .factorypath
@@ -12,14 +18,6 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,5 +27,15 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
 .vscode/
+.history/
+*.log
+
+.DS_Store
+Thumbs.db
