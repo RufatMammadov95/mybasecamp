@@ -8,15 +8,25 @@
     document.addEventListener("DOMContentLoaded", function() {
         var activePanelFromBack = "[[${activePanel}]]";
         var savedPanel = localStorage.getItem("activeProjectPanel");
+        
+        if (performance.navigation.type === 1) {
+            var errorAlert = document.getElementById("members-error-alert");
+            if (errorAlert) errorAlert.remove();
+            
+            var successAlert = document.getElementById("members-success-alert");
+            if (successAlert) successAlert.remove();
+        }
 
         if (activePanelFromBack && activePanelFromBack !== "null" && activePanelFromBack !== "") {
             if (!activePanelFromBack.startsWith("panel-")) {
                 activePanelFromBack = "panel-" + activePanelFromBack;
             }
             showPanel(activePanelFromBack);
-        } else if (savedPanel) {
+        } 
+        else if (savedPanel) {
             showPanel(savedPanel);
-        } else {
+        } 
+        else {
             showPanel("panel-overview");
         }
     });
@@ -24,6 +34,14 @@
     function showPanel(panelId) {
         if (panelId && !panelId.startsWith("panel-")) {
             panelId = "panel-" + panelId;
+        }
+
+        if (panelId !== "panel-members") {
+            var errorAlert = document.getElementById("members-error-alert");
+            if (errorAlert) errorAlert.remove();
+            
+            var successAlert = document.getElementById("members-success-alert");
+            if (successAlert) successAlert.remove();
         }
 
         document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -71,15 +89,6 @@
 				🖋 Created by: <span th:text="${project.owner.email}">toto@gmail.com</span>
 			</div>
 
-			<div th:if="${success}"
-				style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
-				✅ <span th:text="${success}">Successful transaction message</span>
-			</div>
-			<div th:if="${error}"
-				style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
-				❌ <span th:text="${error}">Error message</span>
-			</div>
-
 			<div id="panel-overview" class="panel">
 				<p style="font-size: 16px; color: #34495e;"
 					th:text="${project.description}">Description.</p>
@@ -125,6 +134,17 @@
 
 			<div id="panel-members" class="panel">
 				<h3>Members</h3>
+
+				<div th:if="${error}" id="members-error-alert"
+					style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
+					❌ <span th:text="${error}">Error message</span>
+				</div>
+
+				<div th:if="${success}" id="members-success-alert"
+					style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
+					✅ <span th:text="${success}">Good luck message</span>
+				</div>
+
 				<div class="section-block">
 					<ul style="margin-bottom: 15px; padding-left: 20px;">
 						<li th:text="${project.owner.email} + ' (Owner)'">owner@gmail.com
