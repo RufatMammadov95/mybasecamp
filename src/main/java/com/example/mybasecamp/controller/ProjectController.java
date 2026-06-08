@@ -110,18 +110,31 @@ public class ProjectController {
 	@PostMapping("/projects/add-discussion/{id}")
 	public String addDiscussion(@PathVariable("id") Long id, @RequestParam("title") String title,
 			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
-		Project project = projectService.getProjectById(id);
-		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+		try {
+			Project project = projectService.getProjectById(id);
+			User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
 
-		Discussion discussion = new Discussion();
-		discussion.setTitle(title);
-		discussion.setProject(project);
-		discussion.setUser(user);
+			Discussion discussion = new Discussion();
+			discussion.setTitle(title);
+			discussion.setProject(project);
+			discussion.setUser(user);
 
-		discussionRepository.save(discussion);
+			if (project.getDiscussions() == null) {
+				project.setDiscussions(new ArrayList<>());
+			}
+			project.getDiscussions().add(discussion);
 
-		redirectAttributes.addFlashAttribute("activePanel", "topics");
-		return "redirect:/projects/view/" + id + "?discussionId=" + discussion.getId();
+			discussionRepository.save(discussion);
+
+			redirectAttributes.addFlashAttribute("success", "Topic added successfully");
+			redirectAttributes.addFlashAttribute("activePanel", "topics");
+			return "redirect:/projects/view/" + id + "?discussionId=" + discussion.getId();
+
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error",
+					"An error occurred while creating the topic.: " + e.getMessage());
+			return "redirect:/projects/view/" + id;
+		}
 	}
 
 	@PostMapping("/projects/{projectId}/discussions/{discussionId}/add-message")
@@ -129,15 +142,20 @@ public class ProjectController {
 			@PathVariable("discussionId") Long discussionId, @RequestParam("content") String content,
 			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
 
-		Discussion discussion = discussionRepository.findById(discussionId).orElseThrow();
-		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+		try {
+			Discussion discussion = discussionRepository.findById(discussionId).orElseThrow();
+			User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
 
-		DiscussionMessage message = new DiscussionMessage();
-		message.setContent(content);
-		message.setDiscussion(discussion);
-		message.setUser(user);
+			DiscussionMessage message = new DiscussionMessage();
+			message.setContent(content);
+			message.setDiscussion(discussion);
+			message.setUser(user);
 
-		discussionMessageRepository.save(message);
+			discussionMessageRepository.save(message);
+			redirectAttributes.addFlashAttribute("success", "Your message has been sent");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error sending message: " + e.getMessage());
+		}
 
 		redirectAttributes.addFlashAttribute("activePanel", "topics");
 		return "redirect:/projects/view/" + projectId + "?discussionId=" + discussionId;
@@ -167,17 +185,26 @@ public class ProjectController {
 
 	@PostMapping("/projects/upload/{id}")
 	public String uploadFile(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file,
-			RedirectAttributes redirectAttributes) throws IOException {
-		if (!file.isEmpty()) {
-			Project project = projectService.getProjectById(id);
-			Attachment attachment = new Attachment();
-			String fileName = StringUtils
-					.cleanPath(file.getOriginalFilename() != null ? file.getOriginalFilename() : "attachment");
-			attachment.setFileName(fileName);
-			attachment.setContentType(resolveContentType(file.getContentType(), fileName));
-			attachment.setData(file.getBytes());
-			attachment.setProject(project);
-			attachmentRepository.save(attachment);
+			RedirectAttributes redirectAttributes) {
+
+		try {
+			if (!file.isEmpty()) {
+				Project project = projectService.getProjectById(id);
+				Attachment attachment = new Attachment();
+				String fileName = StringUtils
+						.cleanPath(file.getOriginalFilename() != null ? file.getOriginalFilename() : "attachment");
+				attachment.setFileName(fileName);
+				attachment.setContentType(resolveContentType(file.getContentType(), fileName));
+				attachment.setData(file.getBytes());
+				attachment.setProject(project);
+
+				attachmentRepository.save(attachment);
+				redirectAttributes.addFlashAttribute("success", "File uploaded successfully");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "No file selected for upload!");
+			}
+		} catch (IOException e) {
+			redirectAttributes.addFlashAttribute("error", "Internal error while saving file: " + e.getMessage());
 		}
 
 		redirectAttributes.addFlashAttribute("activePanel", "attachments");
@@ -233,10 +260,9 @@ public class ProjectController {
 			RedirectAttributes redirectAttributes) {
 		try {
 			attachmentRepository.deleteById(attachmentId);
-
-			redirectAttributes.addFlashAttribute("success", "Fayl uğurla silindi.");
+			redirectAttributes.addFlashAttribute("success", "File deleted successfully");
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Faylı silərkən xəta baş verdi.");
+			redirectAttributes.addFlashAttribute("error", "An error occurred while deleting the file");
 		}
 
 		return "redirect:/projects/view/" + projectId + "?activePanel=attachments";

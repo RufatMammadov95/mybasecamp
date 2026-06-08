@@ -35,7 +35,7 @@ public class ProfileController {
 		String email = principal.getName();
 		try {
 			userService.updateProfile(email, username, oldPassword, newPassword);
-			redirectAttributes.addFlashAttribute("successMessage", "Profil məlumatlarınız uğurla yeniləndi!");
+			redirectAttributes.addFlashAttribute("successMessage", "Your profile information has been successfully updated!");
 			return "redirect:/profile/edit";
 		} catch (RuntimeException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
