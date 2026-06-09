@@ -10,11 +10,8 @@
         var savedPanel = localStorage.getItem("activeProjectPanel");
         
         if (performance.navigation.type === 1) {
-            var errorAlert = document.getElementById("members-error-alert");
-            if (errorAlert) errorAlert.remove();
-            
-            var successAlert = document.getElementById("members-success-alert");
-            if (successAlert) successAlert.remove();
+            document.querySelectorAll('#members-error-alert, #members-success-alert, #topics-error-alert, #topics-success-alert')
+                    .forEach(el => el.remove());
         }
 
         if (activePanelFromBack && activePanelFromBack !== "null" && activePanelFromBack !== "") {
@@ -22,11 +19,9 @@
                 activePanelFromBack = "panel-" + activePanelFromBack;
             }
             showPanel(activePanelFromBack);
-        } 
-        else if (savedPanel) {
+        } else if (savedPanel) {
             showPanel(savedPanel);
-        } 
-        else {
+        } else {
             showPanel("panel-overview");
         }
     });
@@ -37,11 +32,13 @@
         }
 
         if (panelId !== "panel-members") {
-            var errorAlert = document.getElementById("members-error-alert");
-            if (errorAlert) errorAlert.remove();
-            
-            var successAlert = document.getElementById("members-success-alert");
-            if (successAlert) successAlert.remove();
+            var mErr = document.getElementById("members-error-alert"); if (mErr) mErr.remove();
+            var mSucc = document.getElementById("members-success-alert"); if (mSucc) mSucc.remove();
+        }
+        
+        if (panelId !== "panel-topics") {
+            var tErr = document.getElementById("topics-error-alert"); if (tErr) tErr.remove();
+            var tSucc = document.getElementById("topics-success-alert"); if (tSucc) tSucc.remove();
         }
 
         document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -58,6 +55,15 @@
             return false;
         }
         formElement.querySelector('.hidden-title-input').value = newTitle;
+        return true;
+    }
+
+    function editMessagePrompt(formElement, currentContent) {
+        var newContent = prompt("Edit your message:", currentContent);
+        if (newContent == null || newContent.trim() === "") {
+            return false;
+        }
+        formElement.querySelector('.hidden-message-input').value = newContent;
         return true;
     }
 </script>
@@ -108,7 +114,8 @@
 				</div>
 			</div>
 
-			<div id="panel-edit" class="panel">
+			<div id="panel-edit" class="panel"
+				th:if="${(project.owner != null and #authentication.name == project.owner.email) or (project.members != null and project.members.?[email == #authentication.name and role.name() == 'ADMIN'].size() > 0)}">
 				<h3>Edit Project</h3>
 				<div class="section-block">
 					<form th:action="@{/projects/edit-name/{id}(id=${project.id})}"
@@ -146,11 +153,31 @@
 				</div>
 
 				<div class="section-block">
-					<ul style="margin-bottom: 15px; padding-left: 20px;">
+					<ul
+						style="margin-bottom: 15px; padding-left: 20px; line-height: 2;">
 						<li th:text="${project.owner.email} + ' (Owner)'">owner@gmail.com
 							(Owner)</li>
+
 						<li th:each="member : ${project.getMembers()}"
-							th:text="${member.email}">member@gmail.com</li>
+							style="display: flex; justify-content: space-between; align-items: center; max-width: 400px; margin-bottom: 5px;">
+							<div>
+								<span th:text="${member.email}">member@gmail.com</span> <span
+									th:text="${member.role.name() == 'ADMIN'} ? ' (Admin)' : ' (User)'"
+									style="color: #7f8c8d; font-style: italic;"> (User)</span>
+							</div>
+
+							<form
+								th:if="${(project.owner != null and #authentication.name == project.owner.email) or (project.members != null and project.members.?[email == #authentication.name and role.name() == 'ADMIN'].size() > 0)}"
+								th:action="@{/projects/{pId}/members/{mId}/remove(pId=${project.id}, mId=${member.id})}"
+								method="post"
+								onsubmit="return confirm('Are you sure you want to remove this member from the project?');"
+								style="display: inline;">
+								<input type="hidden" th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}" />
+								<button type="submit"
+									style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 14px; padding: 0 5px;">❌</button>
+							</form>
+						</li>
 					</ul>
 
 					<form th:action="@{/projects/add-member/{id}(id=${project.id})}"
@@ -180,6 +207,15 @@
 
 			<div id="panel-topics" class="panel">
 				<h3>Discussions</h3>
+				<div th:if="${error}" id="topics-error-alert"
+					style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
+					❌ <span th:text="${error}">Error message</span>
+				</div>
+
+				<div th:if="${success}" id="topics-success-alert"
+					style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
+					✅ <span th:text="${success}">Good luck message</span>
+				</div>
 
 				<form th:action="@{/projects/add-discussion/{id}(id=${project.id})}"
 					method="post" class="form-inline" style="margin-bottom: 20px;">
@@ -215,7 +251,8 @@
 							style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #008ba3; color: white;">
 							<span th:text="${activeDiscussion.title}">Discussion Title</span>
 
-							<div style="display: flex; gap: 8px;">
+							<div style="display: flex; gap: 8px;"
+								th:if="${(project.owner != null and #authentication.name == project.owner.email) or (project.members != null and project.members.?[email == #authentication.name and role.name() == 'ADMIN'].size() > 0)}">
 								<form
 									th:action="@{/projects/{pId}/discussions/{dId}/edit(pId=${project.id}, dId=${activeDiscussion.id})}"
 									method="post" style="display: inline;"
@@ -244,13 +281,45 @@
 						<div class="discussion-body"
 							style="padding: 15px; max-height: 300px; overflow-y: auto;">
 							<div th:each="msg : ${activeDiscussion.messages}" class="msg"
-								style="margin-bottom: 12px;">
-								<span class="msg-user" th:text="${msg.user.email}"
-									style="font-weight: bold; color: #008ba3; display: block; font-size: 13px;">user@mail.com</span>
+								style="margin-bottom: 15px; padding: 8px; border-radius: 4px; background: #fdfdfd; border-left: 3px solid #008ba3;">
+
+								<div
+									style="display: flex; justify-content: space-between; align-items: center;">
+									<span class="msg-user" th:text="${msg.user.email}"
+										style="font-weight: bold; color: #008ba3; font-size: 13px;">user@mail.com</span>
+
+									<div style="display: flex; gap: 10px; font-size: 12px;">
+										<form th:if="${#authentication.name == msg.user.email}"
+											th:action="@{/projects/{pId}/discussions/{dId}/messages/{mId}/edit(pId=${project.id}, dId=${activeDiscussion.id}, mId=${msg.id})}"
+											method="post" style="display: inline;"
+											th:onsubmit="return editMessagePrompt(this, [[${msg.content}]]);">
+											<input type="hidden" th:name="${_csrf.parameterName}"
+												th:value="${_csrf.token}" /> <input type="hidden"
+												name="content" class="hidden-message-input" />
+											<button type="submit"
+												style="background: none; border: none; color: #2980b9; cursor: pointer; padding: 0;">✏️
+												Edit</button>
+										</form>
+
+										<form
+											th:if="${#authentication.name == msg.user.email or (project.owner != null and #authentication.name == project.owner.email) or (project.members != null and project.members.?[email == #authentication.name and role.name() == 'ADMIN'].size() > 0)}"
+											th:action="@{/projects/{pId}/discussions/{dId}/messages/{mId}/delete(pId=${project.id}, dId=${activeDiscussion.id}, mId=${msg.id})}"
+											method="post" style="display: inline;"
+											onsubmit="return confirm('Are you sure you want to delete this message?');">
+											<input type="hidden" th:name="${_csrf.parameterName}"
+												th:value="${_csrf.token}" />
+											<button type="submit"
+												style="background: none; border: none; color: #c0392b; cursor: pointer; padding: 0;">🗑️
+												Delete</button>
+										</form>
+									</div>
+								</div>
+
 								<p class="msg-text" th:text="${msg.content}"
-									style="margin: 4px 0 0 0; font-size: 15px; color: #333;">Message
+									style="margin: 5px 0 0 0; font-size: 14px; color: #333; white-space: pre-wrap;">Message
 									body</p>
 							</div>
+
 							<div th:if="${#lists.isEmpty(activeDiscussion.messages)}"
 								style="color: #aaa; text-align: center; margin-top: 20px;">No
 								messages have been posted yet. Be the first to post!</div>
@@ -323,7 +392,6 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="right-sidebar">
 			<button class="btn-blue" onclick="showPanel('panel-edit')">⚙️
 				Edit Project</button>
@@ -336,8 +404,9 @@
 			<button class="btn-orange" style="background: #586069;"
 				onclick="showPanel('panel-overview')">👁 Overview</button>
 
-			<form th:action="@{/projects/delete/{id}(id=${project.id})}"
-				method="post"
+			<form
+				th:if="${project.owner != null and #authentication.name == project.owner.email}"
+				th:action="@{/projects/delete/{id}(id=${project.id})}" method="post"
 				onsubmit="return confirm('Are you sure you want to delete this project?');"
 				style="width: 100%;">
 				<input type="hidden" th:name="${_csrf.parameterName}"
@@ -348,6 +417,5 @@
 			</form>
 		</div>
 	</div>
-
 </body>
 </html>
