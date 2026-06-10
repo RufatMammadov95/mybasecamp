@@ -38,26 +38,26 @@ public class UserService {
 
 	public void updateProfile(String email, String newUsername, String oldPassword, String newPassword) {
 		User user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new UserNotFoundException("İstifadəçi tapılmadı"));
+				.orElseThrow(() -> new UserNotFoundException("User not found"));
 
 		if (newUsername != null && !newUsername.trim().isEmpty()) {
 			if (!user.getUsername().equals(newUsername) && userRepository.existsByUsername(newUsername)) {
-				throw new RuntimeException("Bu istifadəçi adı artıq götürülüb!");
+				throw new RuntimeException("This username is already taken!");
 			}
 			user.setUsername(newUsername);
 		}
 
 		if (newPassword != null && !newPassword.trim().isEmpty()) {
 			if (oldPassword == null || oldPassword.trim().isEmpty()) {
-				throw new RuntimeException("Şifrəni dəyişmək üçün köhnə şifrəni daxil etməlisiniz!");
+				throw new RuntimeException("To change the password, you must enter the old password!");
 			}
 
 			if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-				throw new RuntimeException("Daxil etdiyiniz köhnə şifrə yanlışdır!");
+				throw new RuntimeException("The old password you entered is incorrect!");
 			}
 
 			if (newPassword.length() < 6) {
-				throw new RuntimeException("Yeni şifrə ən azı 6 simvoldan ibarət olmalıdır!");
+				throw new RuntimeException("The new password must be at least 6 characters long!");
 			}
 
 			user.setPassword(passwordEncoder.encode(newPassword));
