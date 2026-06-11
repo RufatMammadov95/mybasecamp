@@ -122,3 +122,111 @@ p {
 .btn:hover {
 	background-color: #006877;
 }
+
+@media ( max-width : 768px) {
+	h1 {
+		font-size: 38px;
+	}
+	p {
+		font-size: 16px;
+		margin-bottom: 30px;
+	}
+	.btn-group {
+		gap: 20px;
+	}
+}
+
+@media ( max-width : 480px) {
+	body {
+		height: auto;
+		min-height: 100vh;
+		padding: 30px 15px;
+		box-sizing: border-box;
+	}
+	.welcome-container {
+		width: 100%;
+	}
+	.logo-box {
+		width: 90px;
+		height: 90px;
+		margin-bottom: 15px;
+	}
+	.circle-main {
+		width: 45px;
+		height: 45px;
+		top: 10px;
+		left: 20px;
+		border-width: 3px;
+	}
+	.smile {
+		width: 22px;
+		height: 11px;
+		margin: 18px auto 0 auto;
+		border-bottom-width: 3px;
+	}
+	.circle-left, .circle-right {
+		width: 32px;
+		height: 32px;
+		top: 20px;
+		border-width: 3px;
+	}
+	.circle-left {
+		left: 6px;
+	}
+	.circle-right {
+		right: 6px;
+	}
+	.legs {
+		width: 3px;
+		height: 15px;
+		bottom: 10px;
+	}
+	.leg-l {
+		left: 30px;
+	}
+	.leg-m {
+		left: 44px;
+		height: 11px;
+	}
+	.leg-r {
+		right: 30px;
+	}
+	h1 {
+		font-size: 28px;
+		letter-spacing: 1px;
+	}
+	p {
+		font-size: 15px;
+		padding: 0 10px;
+	}
+	.btn-group {
+		flex-direction: column;
+		gap: 15px;
+		width: 100%;
+		max-width: 280px;
+		margin: 0 auto;
+	}
+	.btn {
+		width: 100%;
+		text-align: center;
+		padding: 12px 20px;
+		box-sizing: border-box;
+	}
+}
+
+@media ( max-height : 450px) {
+	body {
+		height: auto;
+		min-height: 100vh;
+		padding: 15px 0;
+	}
+	.logo-box {
+		display: none;
+	}
+	h1 {
+		font-size: 24px;
+	}
+	p {
+		margin-bottom: 15px;
+	}
+}

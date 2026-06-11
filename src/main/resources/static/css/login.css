@@ -169,3 +169,90 @@ input {
 	color: #555;
 	text-decoration: underline;
 }
+
+@media ( max-width : 768px) {
+	.login-container {
+		padding: 30px 25px;
+	}
+	h2 {
+		font-size: 24px;
+	}
+}
+
+@media ( max-width : 480px) {
+	body {
+		height: auto;
+		min-height: 100vh;
+		padding: 20px 0;
+		box-sizing: border-box;
+	}
+	.login-container {
+		width: 92%;
+		padding: 15px;
+	}
+	.logo-box {
+		width: 90px;
+		height: 90px;
+		margin-bottom: 5px;
+	}
+	.circle-main {
+		width: 45px;
+		height: 45px;
+		top: 10px;
+		left: 20px;
+	}
+	.smile {
+		width: 22px;
+		height: 11px;
+		margin: 18px auto 0 auto;
+	}
+	.circle-left, .circle-right {
+		width: 32px;
+		height: 32px;
+		top: 20px;
+	}
+	.circle-left {
+		left: 6px;
+	}
+	.circle-right {
+		right: 6px;
+	}
+	.legs {
+		height: 15px;
+		bottom: 10px;
+	}
+	.leg-l {
+		left: 30px;
+	}
+	.leg-m {
+		left: 44px;
+		height: 11px;
+	}
+	.leg-r {
+		right: 30px;
+	}
+	h2 {
+		font-size: 22px;
+		margin-bottom: 15px;
+	}
+	input {
+		padding: 12px;
+		font-size: 15px;
+	}
+	.btn {
+		width: 100%;
+		padding: 12px;
+		box-sizing: border-box;
+	}
+}
+
+@media ( max-height : 500px) {
+	body {
+		height: auto;
+		min-height: 100vh;
+		padding: 10px 0;
+	}
+	.logo-box {
+		display: none;
+	}
+}

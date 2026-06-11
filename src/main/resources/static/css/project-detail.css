@@ -310,3 +310,86 @@ h1 {
 	justify-content: space-between;
 	min-height: 180px;
 }
+
+@media ( max-width : 1024px) {
+	.container {
+		gap: 30px;
+		margin: 20px auto;
+	}
+	h1 {
+		font-size: 30px;
+	}
+}
+
+@media ( max-width : 768px) {
+	.container {
+		flex-direction: column;
+		gap: 40px;
+	}
+	.left-content {
+		width: 100%;
+	}
+	.right-sidebar {
+		width: 100%;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 15px;
+	}
+	.btn-orange {
+		width: calc(50% - 8px);
+		text-align: center;
+	}
+	.discussions-container {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.topics-sidebar {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.discussion-box {
+		width: 100%;
+	}
+}
+
+@media ( max-width : 480px) {
+	.navbar {
+		flex-direction: column;
+		gap: 15px;
+		padding: 15px 20px;
+		text-align: center;
+	}
+	.nav-links {
+		gap: 15px;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+	h1 {
+		font-size: 24px;
+	}
+	.form-inline {
+		flex-direction: column;
+		gap: 10px;
+	}
+	.form-inline .form-control, .form-inline .btn-blue {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.right-sidebar {
+		flex-direction: column;
+	}
+	.btn-orange {
+		width: 100%;
+		text-align: center;
+	}
+	.image-gallery {
+		justify-content: center;
+	}
+	.image-card {
+		width: calc(50% - 8px);
+		min-height: 160px;
+	}
+	.image-preview {
+		height: 100px;
+	}
+}
