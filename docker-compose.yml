@@ -7,7 +7,7 @@ services:
         environment:
             POSTGRES_DB: mybasecamp_db
             POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: your_secure_password
+            POSTGRES_PASSWORD: ${MY_SECRET_DB_PASSWORD}
         ports:
             - "5432:5432"
         volumes:
@@ -21,11 +21,9 @@ services:
         ports:
             - "8080:8080"
         environment:
-            - DB_HOST=db
-            - DB_PORT=5432
-            - DB_NAME=mybasecamp_db
+            - DB_URL=jdbc:postgresql://db:5432/mybasecamp_db
             - DB_USERNAME=postgres
-            - DB_PASSWORD=your_secure_password
+            - DB_PASSWORD=${MY_SECRET_DB_PASSWORD}
         depends_on:
             - db
         networks:

@@ -4,45 +4,6 @@
 <meta charset="UTF-8">
 <title>Collaborate - Projects</title>
 <link rel="stylesheet" th:href="@{/css/projects.css}">
-<script>
-	document.addEventListener("DOMContentLoaded", function() {
-		var form = document.getElementById("newProjectFormContainer");
-		var grid = document.querySelector(".projects-grid");
-
-		var formStatus = localStorage.getItem("projectFormStatus");
-
-		if (formStatus === "open") {
-			if (form)
-				form.style.display = "block";
-			if (grid)
-				grid.style.display = "none";
-		} else {
-			if (form)
-				form.style.display = "none";
-			if (grid)
-				grid.style.display = "flex";
-		}
-	});
-
-	function toggleProjectForm() {
-		var form = document.getElementById("newProjectFormContainer");
-		var grid = document.querySelector(".projects-grid");
-
-		if (form.style.display === "none" || form.style.display === "") {
-			form.style.display = "block";
-			if (grid)
-				grid.style.display = "none";
-
-			localStorage.setItem("projectFormStatus", "open");
-		} else {
-			form.style.display = "none";
-			if (grid)
-				grid.style.display = "flex";
-
-			localStorage.setItem("projectFormStatus", "closed");
-		}
-	}
-</script>
 </head>
 <body>
 
@@ -94,15 +55,17 @@
 		<div id="newProjectFormContainer" class="form-container">
 			<h3 style="margin-top: 0; color: #2c3e50;">Create New Project</h3>
 			<form th:action="@{/projects/new}" th:object="${newProjectObj}"
-				method="post"
-				onsubmit="localStorage.setItem('projectFormStatus', 'closed');">
+				method="post" onsubmit="return validateProjectForm();">
 				<div class="form-group">
 					<label for="name">Name</label> <input type="text" id="name"
-						th:field="*{name}" required />
+						th:field="*{name}" required minlength="3" maxlength="50"
+						placeholder="Project name (min 3 chars)..." />
 				</div>
 				<div class="form-group">
 					<label for="description">Description</label>
-					<textarea id="description" th:field="*{description}"></textarea>
+					<textarea id="description" th:field="*{description}" required
+						minlength="10" maxlength="500"
+						placeholder="Project description (min 10 chars)..."></textarea>
 				</div>
 				<button type="submit" class="btn-submit">Create Project</button>
 			</form>
@@ -156,6 +119,6 @@
 			</div>
 		</div>
 	</div>
-
+	<script th:src="@{/js/projects.js}"></script>
 </body>
 </html>

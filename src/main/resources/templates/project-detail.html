@@ -4,69 +4,6 @@
 <meta charset="UTF-8">
 <title th:text="${project.name}">Project Details</title>
 <link rel="stylesheet" th:href="@{/css/project-detail.css}">
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var activePanelFromBack = "[[${activePanel}]]";
-        var savedPanel = localStorage.getItem("activeProjectPanel");
-        
-        if (performance.navigation.type === 1) {
-            document.querySelectorAll('#members-error-alert, #members-success-alert, #topics-error-alert, #topics-success-alert')
-                    .forEach(el => el.remove());
-        }
-
-        if (activePanelFromBack && activePanelFromBack !== "null" && activePanelFromBack !== "") {
-            if (!activePanelFromBack.startsWith("panel-")) {
-                activePanelFromBack = "panel-" + activePanelFromBack;
-            }
-            showPanel(activePanelFromBack);
-        } else if (savedPanel) {
-            showPanel(savedPanel);
-        } else {
-            showPanel("panel-overview");
-        }
-    });
-
-    function showPanel(panelId) {
-        if (panelId && !panelId.startsWith("panel-")) {
-            panelId = "panel-" + panelId;
-        }
-
-        if (panelId !== "panel-members") {
-            var mErr = document.getElementById("members-error-alert"); if (mErr) mErr.remove();
-            var mSucc = document.getElementById("members-success-alert"); if (mSucc) mSucc.remove();
-        }
-        
-        if (panelId !== "panel-topics") {
-            var tErr = document.getElementById("topics-error-alert"); if (tErr) tErr.remove();
-            var tSucc = document.getElementById("topics-success-alert"); if (tSucc) tSucc.remove();
-        }
-
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        var targetPanel = document.getElementById(panelId);
-        if (targetPanel) {
-            targetPanel.classList.add('active');
-            localStorage.setItem("activeProjectPanel", panelId);
-        }
-    }
-
-    function editDiscussionPrompt(formElement, currentTitle) {
-        var newTitle = prompt("Enter a new title for the discussion:", currentTitle);
-        if (newTitle == null || newTitle.trim() === "") {
-            return false;
-        }
-        formElement.querySelector('.hidden-title-input').value = newTitle;
-        return true;
-    }
-
-    function editMessagePrompt(formElement, currentContent) {
-        var newContent = prompt("Edit your message:", currentContent);
-        if (newContent == null || newContent.trim() === "") {
-            return false;
-        }
-        formElement.querySelector('.hidden-message-input').value = newContent;
-        return true;
-    }
-</script>
 </head>
 <body>
 
@@ -247,23 +184,32 @@
 
 					<div class="discussion-box" th:if="${activeDiscussion != null}"
 						style="flex: 1; border: 1px solid #e0e0e0; border-radius: 5px;">
+
 						<div class="discussion-header"
 							style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #008ba3; color: white;">
-							<span th:text="${activeDiscussion.title}">Discussion Title</span>
 
-							<div style="display: flex; gap: 8px;"
+							<span id="disc-title-text" th:text="${activeDiscussion.title}">Discussion
+								Title</span>
+
+							<form id="disc-title-form"
+								th:action="@{/projects/{pId}/discussions/{dId}/edit(pId=${project.id}, dId=${activeDiscussion.id})}"
+								method="post"
+								style="display: none; flex: 1; margin-right: 15px; gap: 5px;">
+								<input type="hidden" th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}" /> <input type="text" name="title"
+									th:value="${activeDiscussion.title}" class="form-control"
+									style="height: 30px; padding: 2px 8px; flex: 1;" required />
+								<button type="submit"
+									style="background: #2ecc71; border: none; color: white; padding: 2px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">Save</button>
+								<button type="button" onclick="cancelEditDiscussion()"
+									style="background: #e74c3c; border: none; color: white; padding: 2px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">Cancel</button>
+							</form>
+
+							<div id="disc-header-actions" style="display: flex; gap: 8px;"
 								th:if="${(project.owner != null and #authentication.name == project.owner.email) or (project.members != null and project.members.?[email == #authentication.name and role.name() == 'ADMIN'].size() > 0)}">
-								<form
-									th:action="@{/projects/{pId}/discussions/{dId}/edit(pId=${project.id}, dId=${activeDiscussion.id})}"
-									method="post" style="display: inline;"
-									th:onsubmit="return editDiscussionPrompt(this, [[${activeDiscussion.title}]]);">
-									<input type="hidden" th:name="${_csrf.parameterName}"
-										th:value="${_csrf.token}" /> <input type="hidden"
-										name="title" class="hidden-title-input" />
-									<button type="submit"
-										style="background: transparent; border: none; color: white; cursor: pointer; font-size: 14px;">✏️
-										Edit</button>
-								</form>
+								<button type="button" onclick="toggleEditDiscussion()"
+									style="background: transparent; border: none; color: white; cursor: pointer; font-size: 14px;">✏️
+									Edit</button>
 
 								<form
 									th:action="@{/projects/{pId}/discussions/{dId}/delete(pId=${project.id}, dId=${activeDiscussion.id})}"
@@ -289,17 +235,12 @@
 										style="font-weight: bold; color: #008ba3; font-size: 13px;">user@mail.com</span>
 
 									<div style="display: flex; gap: 10px; font-size: 12px;">
-										<form th:if="${#authentication.name == msg.user.email}"
-											th:action="@{/projects/{pId}/discussions/{dId}/messages/{mId}/edit(pId=${project.id}, dId=${activeDiscussion.id}, mId=${msg.id})}"
-											method="post" style="display: inline;"
-											th:onsubmit="return editMessagePrompt(this, [[${msg.content}]]);">
-											<input type="hidden" th:name="${_csrf.parameterName}"
-												th:value="${_csrf.token}" /> <input type="hidden"
-												name="content" class="hidden-message-input" />
-											<button type="submit"
-												style="background: none; border: none; color: #2980b9; cursor: pointer; padding: 0;">✏️
-												Edit</button>
-										</form>
+
+										<button type="button"
+											th:if="${#authentication.name == msg.user.email}"
+											th:onclick="'toggleEditMessage(' + ${msg.id} + ')'"
+											style="background: none; border: none; color: #2980b9; cursor: pointer; padding: 0;">✏️
+											Edit</button>
 
 										<form
 											th:if="${#authentication.name == msg.user.email or (project.owner != null and #authentication.name == project.owner.email) or (project.members != null and project.members.?[email == #authentication.name and role.name() == 'ADMIN'].size() > 0)}"
@@ -315,9 +256,27 @@
 									</div>
 								</div>
 
-								<p class="msg-text" th:text="${msg.content}"
-									style="margin: 5px 0 0 0; font-size: 14px; color: #333; white-space: pre-wrap;">Message
-									body</p>
+								<div style="margin-top: 5px;">
+									<p th:id="'msg-text-' + ${msg.id}" class="msg-text"
+										th:text="${msg.content}"
+										style="margin: 5px 0 0 0; font-size: 14px; color: #333; white-space: pre-wrap;">Message
+										body</p>
+
+									<form th:id="'msg-form-' + ${msg.id}"
+										th:action="@{/projects/{pId}/discussions/{dId}/messages/{mId}/edit(pId=${project.id}, dId=${activeDiscussion.id}, mId=${msg.id})}"
+										method="post"
+										style="display: none; margin-top: 5px; gap: 5px; align-items: center;">
+										<input type="hidden" th:name="${_csrf.parameterName}"
+											th:value="${_csrf.token}" /> <input type="text"
+											name="content" th:value="${msg.content}" class="form-control"
+											style="flex: 1; height: 30px;" required />
+										<button type="submit"
+											style="background: #2ecc71; border: none; color: white; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-size: 12px; font-weight: bold;">Save</button>
+										<button type="button"
+											th:onclick="'cancelEditMessage(' + ${msg.id} + ')'"
+											style="background: #e74c3c; border: none; color: white; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-size: 12px; font-weight: bold;">Cancel</button>
+									</form>
+								</div>
 							</div>
 
 							<div th:if="${#lists.isEmpty(activeDiscussion.messages)}"
@@ -417,5 +376,12 @@
 			</form>
 		</div>
 	</div>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		window.serverActivePanel = /*[[${activePanel}]]*/'overview';
+		/*]]>*/
+	</script>
+	<script th:src="@{/js/project-detail.js}"></script>
 </body>
 </html>
